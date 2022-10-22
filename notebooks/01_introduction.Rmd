@@ -1,0 +1,46 @@
+---
+title: "Introduction"
+author: "Benzon Carlitos Salazar"
+date: "October 22, 2022"
+---
+
+# Introduction
+
+My goal for this project is to exercise my data analysis skills. I have chosen 
+to work with the Drug Reviews dataset [@Gräßer2018] after spending some time in 
+the UCI Machine Learning Repository [@Dua2019].
+
+I will focus on some illustrative data visualizations, and I will also try to 
+stay true to the original paper and do a very basic, beginner-friendly sentiment 
+analysis of drug satisfaction.
+
+## Load and check the data
+
+```{r setup}
+library(magrittr)
+
+train <- readr::read_tsv(here::here("data-raw", "drugsComTrain_raw.tsv"))
+test <- readr::read_tsv(here::here("data-raw", "drugsComTest_raw.tsv"))
+
+full <- dplyr::bind_rows(train, test)
+
+# Check our data
+str(full)
+
+colnames(full)
+```
+
+Based on our output, we get `r ncol(full)` variables (or columns) and 
+`r dplyr::count(full)` observations (or rows). That's a pretty lengthy dataset!
+
+Our data dictionary is as follows:
+
+| Variable Name | Description                             |
+|:------------- |:--------------------------------------- |
+| ...1          | Patient ID (Surrogate ID)               |
+| drugName      | Name of drug                            | 
+| condition     | Name of condition                       |
+| review        | Patient review                          |
+| rating        | 10 start patient rating                 |
+| date          | Date of review entry                    |
+| usefulCount   | Number of users who found review useful |
