@@ -1,0 +1,131 @@
+---
+title: "Summary statistics"
+author: "Benzon Carlitos Salazar"
+date: "October 22, 2022"
+---
+
+```{r setup, warning=FALSE, include=FALSE, echo=FALSE}
+```
+
+## Summary statistics
+
+Doing some summarizations, we can see count distributions for each column. This 
+will also help us determine if there exists any NA columns.
+
+### Drugs
+
+```{r drug_summarization}
+drug_count <-
+  full %>%
+  dplyr::select(drugName) %>%
+  dplyr::group_by(drugName) %>%
+  dplyr::summarise(count = dplyr::n())
+```
+
+What is the top 10 most used drug?
+
+```{r top_10_most_drug}
+drug_count %>%
+dplyr::arrange(desc(count)) %>%
+dplyr::slice_head(n = 10) %>%
+knitr::kable()
+```
+
+What is the top 10 least used drug?
+
+```{r top_10_least_drug}
+drug_count %>%
+dplyr::arrange(count) %>%
+dplyr::slice_head(n = 10) %>%
+knitr::kable()
+```
+
+The top 10 least used drug is actually misleading, as there are 
+`r drug_count %>% dplyr::filter(count == 1) %>% dplyr::count()` drugs that all 
+have a count of 1.
+
+Are there any NAs or NULLs for `drugName`?
+
+```{r na_nulls}
+drug_count %>%
+dplyr::filter(is.na(drugName) | is.null(drugName)) %>%
+dplyr::count()
+```
+
+### Condition
+
+```{r condition_summarization}
+condition_count <-
+  full %>%
+  dplyr::select(condition) %>%
+  dplyr::group_by(condition) %>%
+  dplyr::summarise(count = dplyr::n())
+```
+
+What are the top 10 patient conditions?
+
+```{r pat_condition_top_10}
+condition_count %>%
+dplyr::arrange(desc(count)) %>%
+dplyr::slice_head(n = 10) %>%
+knitr::kable()
+```
+
+What are the patient conditions?
+
+```{r pat_condition_least}
+condition_count %>%
+dplyr::arrange(count) %>%
+dplyr::slice_head(n = 35) %>%
+knitr::kable()
+```
+
+I am unsure what to make of the `*_span_users_found_this_comment_helpful_`, so 
+we will be removing those later. But ignoring that weirdness, we can see that 
+`amyotrophic_lateral_sclerosis` is the least mentioned condition, followed by 
+`anti_nmda_receptor_encephalitis`.
+
+### Ratings
+
+Since the ratings are 1-10, we will categorize them into 3 levels:
+
+* low_rating = 0-3
+* mid_rating = 4-7
+* high_rating = 8-10
+
+First, we create our row levels, then we add a new `drug_rating` column.
+
+```{r rating_row_lvls}
+rating_row_lvl <- 
+  c("Low [0-3]", 
+    "Mid [4-7]", 
+    "High [8-10]", 
+    "Unknown")
+
+full_proc_rating <-
+  full %>%
+  dplyr::mutate(
+    drug_rating = factor(
+      dplyr::case_when(
+        rating > 0 & rating <= 3 ~ rating_row_lvl[1],
+        rating >= 4 & rating <= 7 ~ rating_row_lvl[2],
+        rating >= 8 & rating <= 10 ~ rating_row_lvl[3],
+        TRUE ~ rating_row_lvl[4]
+      ), levels = rating_row_lvl))
+```
+
+Then, we utilize `gtsummary` package to see count distribution and frequency 
+distributions.
+
+```{r rating_gt}
+full_proc_rating %>%
+dplyr::select(drug_rating) %>%
+gtsummary::tbl_summary(label = list(drug_rating ~ "Drug Rating")) %>%
+gtsummary::bold_labels()%>%
+gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+```
+
+```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
+rm(list = ls())
+gc()
+```

@@ -44,4 +44,10 @@ analysis of drug satisfaction.
 ```{r child = "01_preprocessing.Rmd"}
 ```
 
+```{r child = "02_summary_statistics.Rmd"}
+```
+
+```{r child = "03_patient_review.Rmd"}
+```
+
 # References

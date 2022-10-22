@@ -1,0 +1,46 @@
+---
+title: "Patient Review"
+author: "Benzon Carlitos Salazar"
+date: "October 22, 2022"
+---
+
+```{r setup, warning=FALSE, include=FALSE, echo=FALSE}
+library(magrittr)
+
+full <- readRDS(here::here("data", "full.rds"))
+```
+
+## Patient review text cleaning
+
+Let's take a look at 3 sample patients' review text to se what we are dealing 
+with.
+
+```{r pat_review_text}
+sample_txt <-
+  full %>%
+  dplyr::select(id, review) %>%
+  head(n = 5)
+```
+
+**Patient 1's review reads:** `r sample_txt[[2]][1]`
+
+**Patient 2's review reads:** `r sample_txt[[2]][2]`
+
+**Patient 3's review reads:** `r sample_txt[[2]][3]`
+
+**Patient 4's review reads:** `r sample_txt[[2]][4]`
+
+**Patient 5's review reads:** `r sample_txt[[2]][5]`
+
+From this, we get the following initial observations:
+
+* Capitalizations of names.
+* We get a mix of numeric and character representation of numbers (i.e., 5 Mg vs 
+two weeks).
+* Word contractions -- it's, didn't, I'm, etc.
+* Special characters -- dash (-), ellipsis (...), parentheses.
+
+```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
+rm(list = ls())
+gc()
+```
