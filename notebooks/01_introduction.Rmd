@@ -37,10 +37,42 @@ Our data dictionary is as follows:
 
 | Variable Name | Description                             |
 |:------------- |:--------------------------------------- |
-| ...1          | Patient ID (Surrogate ID)               |
+| ...1          | Identifier                              |
 | drugName      | Name of drug                            | 
 | condition     | Name of condition                       |
 | review        | Patient review                          |
 | rating        | 10 start patient rating                 |
 | date          | Date of review entry                    |
 | usefulCount   | Number of users who found review useful |
+
+## Tokenization and data cleaning
+
+The first column, `...1` looks to be an identifier, so we rename that column as 
+and `id`, and then we do some minor tokenization to enforce consistency. 
+Additionally, we will utilize the `lubridate` package to break down the date 
+column to census month and census year, to see if it will give us some additional 
+insights.
+
+We will also remove any special characters in the `drugName` and `condition` 
+columns, turn white spaces into underscores, while keeping the original text for 
+the `review` for now.
+
+```{r tokenization}
+full <-
+  full %>%
+  dplyr::rename(id = "...1")
+
+full$drugName <- stringr::str_replace_all(full$drugName, "[^[:alnum:]]", "_")
+full$condition <- stringr::str_replace_all(full$condition, "[^[:alnum:]]", "_")
+full$drugName <- tolower(full$drugName)
+full$condition <- tolower(full$condition)
+full$date <- lubridate::mdy(full$date)
+full$rating <- as.numeric(full$rating)
+full$usefulCount <- as.numeric(full$usefulCount)
+
+full <-
+  full %>%
+  dplyr::mutate(census_month = lubridate::month(date)) %>%
+  dplyr::mutate(census_year = lubridate::year(date)) %>%
+  dplyr::rename(full_date = date)
+```
