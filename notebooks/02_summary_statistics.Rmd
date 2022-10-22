@@ -126,6 +126,36 @@ gtsummary::bold_labels() %>%
 gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
 ```
 
+We see that the general consensus leans towards a high rating for each drugs. 
+Let's drill down further to see what is the highest overall rating.
+
+```{r rating_drill_down}
+full %>%
+dplyr::mutate(rating__char = as.character(rating)) %>%
+dplyr::select(rating__char) %>%
+gtsummary::tbl_summary(label = list(rating__char ~ "Drug Rating")) %>%
+gtsummary::bold_labels() %>%
+gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+```
+
+```{r tmp_rating, include=FALSE, echo=FALSE, warning=FALSE}
+tmp_rating <-
+  full %>%
+  dplyr::mutate(rating__char = as.character(rating)) %>%
+  dplyr::group_by(rating__char) %>%
+  dplyr::summarise(count = dplyr::n())
+
+max_tmp_cnt <- max(tmp_rating$count)
+max_tmp_rating <-
+  tmp_rating %>%
+  dplyr::filter(count == max_tmp_cnt) %>%
+  dplyr::select(rating__char)
+```
+
+We see that patients mostly rated their drugs `r max_tmp_rating`, with a maximum 
+count of `r max_tmp_cnt`. This lets us know that the attitude towards each 
+patient's drug is positive.
+
 ## Review Dates
 
 Using the `census_month` and `census_year`, we should be able to see count 
