@@ -3,6 +3,8 @@
 Exploratory data analysis exercise of the drug review dataset that provides patient reviews on specific drugs along with 
 related conditions and a 10 star patient rating reflecting overall patient satisfaction.
 
+[Web link](./output/notebooks.html)
+
 ## Execution
 
 To execute, run the below commands:
