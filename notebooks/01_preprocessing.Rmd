@@ -67,7 +67,7 @@ full$usefulCount <- as.numeric(full$usefulCount)
 full <-
   full %>%
   dplyr::mutate(census_month = lubridate::month(date)) %>%
-  dplyr::mutate(census_year = lubridate::year(date)) %>%
+  dplyr::mutate(census_year = as.character(lubridate::year(date))) %>%
   dplyr::rename(full_date = date)
 ```
 

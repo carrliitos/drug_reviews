@@ -5,14 +5,15 @@ date: "October 22, 2022"
 ---
 
 ```{r setup, warning=FALSE, include=FALSE, echo=FALSE}
+full <- readRDS(here::here("data", "full.rds"))
 ```
 
-## Summary statistics
+# Summary statistics
 
 Doing some summarizations, we can see count distributions for each column. This 
 will also help us determine if there exists any NA columns.
 
-### Drugs
+## Drugs
 
 ```{r drug_summarization}
 drug_count <-
@@ -52,7 +53,7 @@ dplyr::filter(is.na(drugName) | is.null(drugName)) %>%
 dplyr::count()
 ```
 
-### Condition
+## Patient Condition
 
 ```{r condition_summarization}
 condition_count <-
@@ -71,7 +72,7 @@ dplyr::slice_head(n = 10) %>%
 knitr::kable()
 ```
 
-What are the patient conditions?
+What are the least patient conditions?
 
 ```{r pat_condition_least}
 condition_count %>%
@@ -85,7 +86,7 @@ we will be removing those later. But ignoring that weirdness, we can see that
 `amyotrophic_lateral_sclerosis` is the least mentioned condition, followed by 
 `anti_nmda_receptor_encephalitis`.
 
-### Ratings
+## Ratings
 
 Since the ratings are 1-10, we will categorize them into 3 levels:
 
@@ -121,9 +122,81 @@ distributions.
 full_proc_rating %>%
 dplyr::select(drug_rating) %>%
 gtsummary::tbl_summary(label = list(drug_rating ~ "Drug Rating")) %>%
-gtsummary::bold_labels()%>%
+gtsummary::bold_labels() %>%
 gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
 ```
+
+## Review Dates
+
+Using the `census_month` and `census_year`, we should be able to see count 
+distributions per month and per year. To make our analysis easier, we will 
+summarize the census month and year separately.
+
+First, we convert each month numerical representation to their correct string 
+representation, and then summarize with `gtsummary`.
+
+```{r review_months}
+review_census_month <-
+  full %>%
+  dplyr::mutate(census_month__abbr = month.abb[census_month])
+
+review_census_month %>%
+dplyr::select(census_month__abbr) %>%
+gtsummary::tbl_summary(
+  label = list(
+    census_month__abbr ~ "Census Month of Review"
+  )
+) %>%
+gtsummary::bold_labels() %>%
+gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+```
+
+```{r tmp_month, include=FALSE, echo=FALSE, warning=FALSE}
+tmp__month <-
+  review_census_month %>%
+  dplyr::group_by(census_month__abbr) %>%
+  dplyr::summarise(count = dplyr::n())
+
+max_count <- max(tmp__month$count)
+
+max_month <-
+  tmp__month %>%
+  dplyr::filter(count == max_count) %>%
+  dplyr::select(census_month__abbr)
+```
+
+Based on the summary table, reviews look pretty evenly distributed throughout 
+the months. Although, it looks like `r max_month` has the most reviews, with 
+`r max_count` review counts.
+
+Next, we take a look at the census year.
+
+```{r review_years}
+full %>%
+dplyr::select(census_year) %>%
+gtsummary::tbl_summary(
+  label = list(census_year ~ "Census Year of Review")
+) %>%
+gtsummary::bold_labels() %>%
+gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+```
+
+```{r tmp_year, include=FALSE, echo=FALSE, warning=FALSE}
+tmp__yr <-
+  full %>%
+  dplyr::group_by(census_year) %>%
+  dplyr::summarise(count = dplyr::n())
+
+max_year_cnt <- max(tmp__yr$count)
+max_year <- 
+  tmp__yr %>%
+  dplyr::filter(count == max_year_cnt) %>%
+  dplyr::select(census_year)
+```
+
+At first glance, it looks like we see a linear increase in the number of patients 
+review. We especially see a jump from 2014 to 2015, with year `r max_year` 
+having the most reviews of `r max_year_cnt`.
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 rm(list = ls())
