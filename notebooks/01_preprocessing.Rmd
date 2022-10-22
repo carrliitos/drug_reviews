@@ -1,18 +1,10 @@
 ---
-title: "Introduction"
+title: "Preprocessing and Cleaning"
 author: "Benzon Carlitos Salazar"
 date: "October 22, 2022"
 ---
 
-# Introduction
-
-My goal for this project is to exercise my data analysis skills. I have chosen 
-to work with the Drug Reviews dataset [@Gräßer2018] after spending some time in 
-the UCI Machine Learning Repository [@Dua2019].
-
-I will focus on some illustrative data visualizations, and I will also try to 
-stay true to the original paper and do a very basic, beginner-friendly sentiment 
-analysis of drug satisfaction.
+# Preprocessing and Cleaning
 
 ## Load and check the data
 
@@ -45,7 +37,7 @@ Our data dictionary is as follows:
 | date          | Date of review entry                    |
 | usefulCount   | Number of users who found review useful |
 
-## Tokenization and data cleaning
+## Tokenization and cleaning
 
 The first column, `...1` looks to be an identifier, so we rename that column as 
 and `id`, and then we do some minor tokenization to enforce consistency. 
@@ -75,4 +67,54 @@ full <-
   dplyr::mutate(census_month = lubridate::month(date)) %>%
   dplyr::mutate(census_year = lubridate::year(date)) %>%
   dplyr::rename(full_date = date)
+```
+
+## Summary statistics
+
+Doing some summarizations, we can see count distributions for each column. This 
+will also help us determine if there exists any NA columns. For this analysis, 
+we utilize the `gtsummary` package [(link)](https://www.danieldsjoberg.com/gtsummary/).
+
+```{r summarization}
+full %>%
+gtsummary::tbl_summary()
+```
+
+## Patient review text cleaning
+
+Let's take a look at 3 sample patients' review text to se what we are dealing 
+with.
+
+```{r pat_review_text}
+sample_txt <-
+  full %>%
+  dplyr::select(id, review) %>%
+  head(n = 5)
+```
+
+**Patient 1's review reads:** `r sample_txt[[2]][1]`
+
+**Patient 2's review reads:** `r sample_txt[[2]][2]`
+
+**Patient 3's review reads:** `r sample_txt[[2]][3]`
+
+**Patient 4's review reads:** `r sample_txt[[2]][4]`
+
+**Patient 5's review reads:** `r sample_txt[[2]][5]`
+
+From this, we get the following initial observations:
+
+* Capitalizations of names.
+* We get a mix of numeric and character representation of numbers (i.e., 5 Mg vs 
+two weeks).
+* Word contractions -- it's, didn't, I'm, etc.
+* Special characters -- dash (-), ellipsis (...), parentheses.
+
+
+
+```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
+saveRDS(full, here::here("data", "full.rds"))
+
+# rm(list = ls())
+# gc()
 ```

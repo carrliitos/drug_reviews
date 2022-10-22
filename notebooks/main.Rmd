@@ -31,7 +31,17 @@ Exploratory data analysis exercise of the drug review dataset that provides
 patient reviews on specific drugs along with related conditions and a 10 star 
 patient rating reflecting overall patient satisfaction.
 
-```{r child = "01_introduction.Rmd"}
+# Introduction
+
+My goal for this project is to exercise my data analysis skills. I have chosen 
+to work with the Drug Reviews dataset [@Gräßer2018] after spending some time in 
+the UCI Machine Learning Repository [@Dua2019].
+
+I will focus on some illustrative data visualizations, and I will also try to 
+stay true to the original paper and do a very basic, beginner-friendly sentiment 
+analysis of drug satisfaction.
+
+```{r child = "01_preprocessing.Rmd"}
 ```
 
-# Bibliography
+# References
