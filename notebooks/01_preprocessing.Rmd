@@ -17,7 +17,7 @@ test <- readr::read_tsv(here::here("data-raw", "drugsComTest_raw.tsv"))
 full <- dplyr::bind_rows(train, test)
 
 # Check our data
-str(full)
+tibble::glimpse(full)
 
 colnames(full)
 ```
