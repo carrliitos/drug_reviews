@@ -34,11 +34,41 @@ sample_txt <-
 
 From this, we get the following initial observations:
 
-* Capitalizations of names.
+* Capitalization of names.
 * We get a mix of numeric and character representation of numbers (i.e., 5 Mg vs 
 two weeks).
 * Word contractions -- it's, didn't, I'm, etc.
 * Special characters -- dash (-), ellipsis (...), parentheses.
+* Handle HTML character encodings.
+
+## Basic Preprocessing
+
+For some basic string cleaning, we can do the following:
+
+* Remove trailing and leading whitespaces.
+* Remove any newlines (`\n`) or tabs (`\t`).
+* Normalize capitalizations.
+* We convert HTML character encoding to their proper representations using 
+`textutils` and enforce consistent character encoding -- `UTF-8`
+
+```{r sample_clean_up}
+sample_txt_cleanup <- sample_txt[[2]][[3]]
+
+cleaned_txt <-
+  sample_txt_cleanup %>%
+  textutils::HTMLdecode() %>%
+  iconv("UTF-8", sub = "byte") %>%
+  tolower() %>%
+  stringr::str_replace_all("[^[:alnum:][.]['][!]]", " ") %>%
+  stringr::str_trim() %>%
+  stringr::str_squish()
+```
+
+The following is an example of a cleaned text of patient 4's review:
+
+**Original**: `r sample_txt_cleanup`
+
+**Cleaned**: `r cleaned_txt`
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 rm(list = ls())

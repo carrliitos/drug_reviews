@@ -52,7 +52,8 @@ Are there any NAs or NULLs for `drugName`?
 ```{r na_nulls}
 drug_count %>%
 dplyr::filter(is.na(drugName) | is.null(drugName)) %>%
-dplyr::select(count)
+dplyr::select(count) %>%
+knitr::kable()
 ```
 
 ## Patient Condition
@@ -107,7 +108,8 @@ full$condition <- tidyr::replace_na(full$condition, "unknown_condition")
 # Check
 full %>%
 dplyr::filter(condition == "unknown_condition") %>%
-dplyr::count()
+dplyr::count() %>%
+knitr::kable()
 ```
 
 ## Ratings
@@ -396,6 +398,7 @@ and 10. With 32% of all ratings being a 10/10.
 2016 being the year with most reviews.
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
+saveRDS(full, here::here("data", "full.rds"))
 rm(list = ls())
 gc()
 ```
