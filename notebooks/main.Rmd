@@ -2,6 +2,9 @@
 title: "Drug Reviews - EDA"
 author: "Benzon Carlitos Salazar"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
+name: "eda-practice"
+navbar:
+  title: "Drug Reviews - EDA"
 output: 
   html_notebook:
     code_folding: show
