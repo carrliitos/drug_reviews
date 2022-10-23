@@ -1,5 +1,5 @@
 ---
-title: "Drug Reviews - EDA"
+title: "Drug Reviews - Exploratory Data Analysis and Sentiment Analysis"
 author: "Benzon Carlitos Salazar"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 

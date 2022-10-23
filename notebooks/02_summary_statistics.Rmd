@@ -91,9 +91,23 @@ we will be removing those later. But ignoring that weirdness, we can see that
 Are there any NAs or NULLs for patient `condition`?
 
 ```{r na_nulls}
-condition_count %>%
-dplyr::filter(is.na(condition) | is.null(condition)) %>%
-dplyr::select(count)
+na_condition <-
+  condition_count %>%
+  dplyr::filter(is.na(condition) | is.null(condition)) %>%
+  dplyr::select(count)
+```
+
+There appears to be `r as.integer(na_condition)` NA or NULL conditions. Since 
+there are so many, I have decided to leave them in and just convert each NA/NULL 
+conditions to `unknown_condition` value.
+
+```{r replace_na}
+full$condition <- tidyr::replace_na(full$condition, "unknown_condition")
+
+# Check
+full %>%
+dplyr::filter(condition == "unknown_condition") %>%
+dplyr::count()
 ```
 
 ## Ratings
