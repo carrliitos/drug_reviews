@@ -191,9 +191,9 @@ max_tmp_rating <-
   dplyr::select(rating__char)
 ```
 
-We see that patients mostly rated their drugs `r max_tmp_rating`, with a maximum 
-count of `r max_tmp_cnt`. This lets us know that the attitude towards each 
-patient's drug is positive.
+We see that patients mostly rated their drugs `r as.integer(max_tmp_rating)`, 
+with a maximum count of `r as.integer(max_tmp_cnt)`. This lets us know that the 
+attitude towards each patient's drug is positive.
 
 ## Review Dates
 
@@ -250,8 +250,8 @@ max_month <-
 ```
 
 Based on the summary table, reviews look pretty evenly distributed throughout 
-the months. Although, it looks like `r max_month` has the most reviews, with 
-`r max_count` review counts.
+the months. Although, it looks like `r as.integer(max_month)` has the most 
+reviews, with `r as.integer(max_count)` review counts.
 
 Next, we take a look at the census year.
 
@@ -293,8 +293,8 @@ max_year <-
 ```
 
 At first glance, it looks like we see a steady increase in the number of patients 
-review. We especially see a jump from 2014 to 2015, with year `r max_year` 
-having the most reviews of `r max_year_cnt`.
+review. We especially see a jump from 2014 to 2015, with year 
+`r as.integer(max_year)` having the most reviews of `r max_year_cnt`.
 
 ### Census year and month
 
@@ -375,8 +375,8 @@ following conclusions:
 
 * Levonorgestrel, a progestin, is the most reviewed drug, followed by 
 Etonogestrel.
-* Most patients rated their drug pretty high, with mostly ratings of 8, 9, and 
-10. With 32% of all ratings being a 10/10.
+* Most patients rated their drug pretty high, with mostly ratings of 8, 9, 
+and 10. With 32% of all ratings being a 10/10.
 * Reviews are happening consistently every month.
 * We see an increase in reviews, however, in years 2015, 2016, and 2017, with 
 2016 being the year with most reviews.

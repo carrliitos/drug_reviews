@@ -10,7 +10,7 @@ library(magrittr)
 full <- readRDS(here::here("data", "full.rds"))
 ```
 
-## Patient review text cleaning
+# Patient reviews
 
 Let's take a look at 3 sample patients' review text to se what we are dealing 
 with.
