@@ -5,6 +5,8 @@ date: "October 22, 2022"
 ---
 
 ```{r setup, warning=FALSE, include=FALSE, echo=FALSE}
+library(magrittr)
+
 full <- readRDS(here::here("data", "full.rds"))
 ```
 
@@ -50,7 +52,7 @@ Are there any NAs or NULLs for `drugName`?
 ```{r na_nulls}
 drug_count %>%
 dplyr::filter(is.na(drugName) | is.null(drugName)) %>%
-dplyr::count()
+dplyr::select(count)
 ```
 
 ## Patient Condition
@@ -85,6 +87,14 @@ I am unsure what to make of the `*_span_users_found_this_comment_helpful_`, so
 we will be removing those later. But ignoring that weirdness, we can see that 
 `amyotrophic_lateral_sclerosis` is the least mentioned condition, followed by 
 `anti_nmda_receptor_encephalitis`.
+
+Are there any NAs or NULLs for patient `condition`?
+
+```{r na_nulls}
+condition_count %>%
+dplyr::filter(is.na(condition) | is.null(condition)) %>%
+dplyr::select(count)
+```
 
 ## Ratings
 
@@ -126,6 +136,23 @@ gtsummary::bold_labels() %>%
 gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
 ```
 
+Additionally, we can plot it as well.
+
+```{r rating_factor_plt, fig.align = "center"}
+full_proc_rating %>%
+ggplot2::ggplot(ggplot2::aes(x = drug_rating)) +
+ggplot2::geom_bar(fill = "#0099f9") + 
+ggplot2::theme_classic() +
+ggplot2::scale_y_continuous(
+  labels = scales::label_number(suffix = "K", scale = 1e-3)
+) +
+ggplot2::labs(
+  title = "Patient rating distribution",
+  x = "Drug Rating Categories",
+  y = "Patient Count"
+)
+```
+
 We see that the general consensus leans towards a high rating for each drugs. 
 Let's drill down further to see what is the highest overall rating.
 
@@ -138,16 +165,28 @@ gtsummary::bold_labels() %>%
 gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
 ```
 
-```{r tmp_rating, include=FALSE, echo=FALSE, warning=FALSE}
-tmp_rating <-
+Let's plot our summaries.
+
+```{r rating_plots, fig.align = "center"}
+full %>%
+ggplot2::ggplot(ggplot2::aes(x = rating)) + 
+ggplot2::geom_bar(fill = "#0099f9") +
+ggplot2::theme_classic() +
+ggplot2::labs(
+  title = "Patient rating distribution",
+  x = "Drug Ratings",
+  y = "Patient Count"
+)
+
+rating__sums <-
   full %>%
   dplyr::mutate(rating__char = as.character(rating)) %>%
   dplyr::group_by(rating__char) %>%
   dplyr::summarise(count = dplyr::n())
 
-max_tmp_cnt <- max(tmp_rating$count)
+max_tmp_cnt <- max(rating__sums$count)
 max_tmp_rating <-
-  tmp_rating %>%
+  rating__sums %>%
   dplyr::filter(count == max_tmp_cnt) %>%
   dplyr::select(rating__char)
 ```
@@ -165,10 +204,12 @@ summarize the census month and year separately.
 First, we convert each month numerical representation to their correct string 
 representation, and then summarize with `gtsummary`.
 
-```{r review_months}
+```{r review_months, fig.align = "center"}
 review_census_month <-
   full %>%
-  dplyr::mutate(census_month__abbr = month.abb[census_month])
+  dplyr::mutate(
+    census_month__abbr = factor(month.abb[census_month], levels = month.abb)
+  )
 
 review_census_month %>%
 dplyr::select(census_month__abbr) %>%
@@ -179,6 +220,19 @@ gtsummary::tbl_summary(
 ) %>%
 gtsummary::bold_labels() %>%
 gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+
+review_census_month %>%
+ggplot2::ggplot(ggplot2::aes(x = census_month__abbr)) + 
+ggplot2::geom_bar(fill = "#0099f9") + 
+ggplot2::theme_classic() +
+ggplot2::scale_y_continuous(
+  labels = scales::label_number(suffix = "K", scale = 1e-3)
+) +
+ggplot2::labs(
+  title = "Patient Review per Month",
+  x = "Census Month",
+  y = "Patient Count"
+)
 ```
 
 ```{r tmp_month, include=FALSE, echo=FALSE, warning=FALSE}
@@ -201,7 +255,7 @@ the months. Although, it looks like `r max_month` has the most reviews, with
 
 Next, we take a look at the census year.
 
-```{r review_years}
+```{r review_years, fig.align = "center"}
 full %>%
 dplyr::select(census_year) %>%
 gtsummary::tbl_summary(
@@ -209,6 +263,20 @@ gtsummary::tbl_summary(
 ) %>%
 gtsummary::bold_labels() %>%
 gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+
+full %>%
+dplyr::select(census_year) %>%
+ggplot2::ggplot(ggplot2::aes(x = census_year)) + 
+ggplot2::theme_classic() +
+ggplot2::scale_y_continuous(
+  labels = scales::label_number(suffix = "K", scale = 1e-3)
+) +
+ggplot2::geom_bar(fill = "#0099f9") + 
+ggplot2::labs(
+  title = "Patient Review per Year",
+  x = "Census Year",
+  y = "Patient Count"
+)
 ```
 
 ```{r tmp_year, include=FALSE, echo=FALSE, warning=FALSE}
@@ -224,9 +292,80 @@ max_year <-
   dplyr::select(census_year)
 ```
 
-At first glance, it looks like we see a linear increase in the number of patients 
+At first glance, it looks like we see a steady increase in the number of patients 
 review. We especially see a jump from 2014 to 2015, with year `r max_year` 
 having the most reviews of `r max_year_cnt`.
+
+### Census year and month
+
+Taking a look at the census year and months together, we can see which month for 
+each year the distribution of patient reviews.
+
+Let's first look at the trend of reviews.
+
+```{r review_trends, fig.align = "center"}
+census_month_year <-
+  full %>%
+  dplyr::select(census_month, census_year) %>%
+  dplyr::mutate(
+    census_month = factor(month.abb[census_month], levels = month.abb))
+
+census_month_year %>%
+dplyr::group_by(census_month, census_year) %>%
+dplyr::summarise(rev_count = dplyr::n(), .groups = "keep") %>%
+dplyr::arrange(census_year, census_month) %>%
+dplyr::ungroup() %>%
+dplyr::mutate(time = dplyr::row_number()) %>%
+ggplot2::ggplot(ggplot2::aes(x = time, y = rev_count)) +
+ggplot2::geom_point(shape = 21, color = "black", fill = "#69b3a2", size = 2) + 
+ggplot2::geom_line(color = "black") +
+ggplot2::theme_classic() +
+ggplot2::scale_y_continuous(
+  labels = scales::label_number(suffix = "K", scale = 1e-3)
+) +
+ggplot2::labs(
+  title = "Patient Review count overtime",
+  x = "Time period (t)",
+  y = "Review Count",
+)
+```
+
+We see a couple of peaks and valleys here and there. At around t=23, we see the 
+first peak, but we can also see that by t=25, we get the biggest drop in patient 
+responses. Then the biggest climb from t=80 up to t=90 (approximately).
+
+Let's look at some summaries.
+
+```{r census_month_and_year, fig.align = "center"}
+census_month_year %>%
+gtsummary::tbl_summary(
+  by = census_year,
+  label = list(census_month ~ "Census Month")
+) %>%
+gtsummary::bold_labels() %>%
+gtsummary::modify_footnote(update = dplyr::everything() ~ NA)
+
+census_month_year %>%
+dplyr::group_by(census_month, census_year) %>%
+dplyr::summarise(rev_count = dplyr::n(), .groups = "keep") %>%
+ggplot2::ggplot(
+  ggplot2::aes(x = census_year, y = census_month, fill = rev_count)
+) +
+ggplot2::geom_tile() +
+ggplot2::theme_classic() +
+ggplot2::scale_fill_gradient(low="white", high="blue") +
+ggplot2::labs(
+  title = "Patient Review per Month per Year",
+  x = "Census Year",
+  y = "Census Month",
+  fill = "Review Count"
+)
+```
+
+The heatmap provides a great visualization of when we see an increase in patient 
+responses. From March of 2015 all the way to May of 2017, we see strong numbers 
+of responses. Then, at about April of 2017, we see some decline all the way to 
+November of that same year.
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 rm(list = ls())
