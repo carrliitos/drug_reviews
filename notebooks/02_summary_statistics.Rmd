@@ -367,6 +367,20 @@ responses. From March of 2015 all the way to May of 2017, we see strong numbers
 of responses. Then, at about April of 2017, we see some decline all the way to 
 November of that same year.
 
+## Key Takeaways
+
+Excluding the `usefulCount` column (I would like to clump that together with the 
+patient reviews), and outside the sentiment of the reviews, we can create the 
+following conclusions:
+
+* Levonorgestrel, a progestin, is the most reviewed drug, followed by 
+Etonogestrel.
+* Most patients rated their drug pretty high, with mostly ratings of 8, 9, and 
+10. With 32% of all ratings being a 10/10.
+* Reviews are happening consistently every month.
+* We see an increase in reviews, however, in years 2015, 2016, and 2017, with 
+2016 being the year with most reviews.
+
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 rm(list = ls())
 gc()
