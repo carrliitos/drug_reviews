@@ -22,8 +22,9 @@ tibble::glimpse(full)
 colnames(full)
 ```
 
-Based on our output, we get `r ncol(full)` variables (or columns) and 
-`r dplyr::count(full)` observations (or rows). That's a pretty lengthy dataset!
+Based on our output, we get `r as.integer(ncol(full))` variables (or columns) 
+and `r as.integer(dplyr::count(full))` observations (or rows). That's a pretty 
+lengthy dataset!
 
 Our data dictionary is as follows:
 
@@ -69,6 +70,14 @@ full <-
   dplyr::mutate(census_month = lubridate::month(date)) %>%
   dplyr::mutate(census_year = as.character(lubridate::year(date))) %>%
   dplyr::rename(full_date = date)
+```
+
+We get a new looking dataset.
+
+```{r new}
+full %>%
+dplyr::slice_head(n = 5) %>%
+tibble::glimpse()
 ```
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}

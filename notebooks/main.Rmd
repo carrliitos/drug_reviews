@@ -50,4 +50,26 @@ analysis of drug satisfaction.
 ```{r child = "03_patient_review.Rmd"}
 ```
 
+# Packages Used
+
+```{r packages_used, echo=FALSE, include=FALSE}
+pckgs <-
+  renv::dependencies() %>%
+  tibble::as_tibble()
+
+installed <-
+  installed.packages() %>%
+  tibble::as_tibble()
+
+used <-
+  pckgs %>%
+  dplyr::inner_join(installed, by = "Package", suffix = c(".renv", ".base")) %>%
+  dplyr::distinct(Package, Version.base) %>%
+  dplyr::arrange(Package) %>%
+  dplyr::rename(Version = "Version.base") %>%
+  knitr::kable()
+```
+
+`r used`
+
 # References
