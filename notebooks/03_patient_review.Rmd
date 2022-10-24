@@ -49,7 +49,8 @@ For some basic string cleaning, we can do the following:
 * Remove any newlines (`\n`) or tabs (`\t`).
 * Normalize capitalizations.
 * We convert HTML character encoding to their proper representations using 
-`textutils` and enforce consistent character encoding -- `UTF-8`
+`textutils` and enforce consistent character encoding -- `UTF-8`.
+* Convert ellipsis
 
 ```{r sample_clean_up}
 sample_txt_cleanup <- sample_txt[[2]][[3]]
@@ -61,7 +62,8 @@ cleaned_txt <-
   tolower() %>%
   stringr::str_replace_all("[^[:alnum:][.]['][!]]", " ") %>%
   stringr::str_trim() %>%
-  stringr::str_squish()
+  stringr::str_squish() %>%
+  stringr::str_replace_all("[.]{2,3}", ".") # convert ellipsis to a period
 ```
 
 The following is an example of a cleaned text of patient 4's review:
