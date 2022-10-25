@@ -8,13 +8,19 @@ date: "October 22, 2022"
 
 ## Load and check the data
 
+
+**Disclaimer**: I am going to just select a random sample of 1,000 reviews 
+because my laptop does not have enough computing power.
+
 ```{r setup}
 library(magrittr)
 
 train <- readr::read_tsv(here::here("data-raw", "drugsComTrain_raw.tsv"))
 test <- readr::read_tsv(here::here("data-raw", "drugsComTest_raw.tsv"))
 
-full <- dplyr::bind_rows(train, test)
+full <- 
+  dplyr::bind_rows(train, test) %>%
+  dplyr::slice_sample(n = 1000)
 
 # Check our data
 tibble::glimpse(full)
@@ -44,7 +50,7 @@ We do some basic tokenization and cleaning.
 
 The first column, `...1` looks to be an identifier, so we rename that column as 
 and `id`, and then we do some minor tokenization to enforce consistency. 
-Additionally, we will utilize the `lubridate` package to break down the date 
+Additionally, we will utilize the `{lubridate}` package to break down the date 
 column to census month and census year, to see if it will give us some additional 
 insights.
 

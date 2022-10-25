@@ -141,7 +141,7 @@ full_proc_rating <-
       ), levels = rating_row_lvl))
 ```
 
-Then, we utilize `gtsummary` package to see count distribution and frequency 
+Then, we utilize `{gtsummary}` package to see count distribution and frequency 
 distributions.
 
 ```{r rating_gt}
@@ -218,7 +218,7 @@ distributions per month and per year. To make our analysis easier, we will
 summarize the census month and year separately.
 
 First, we convert each month numerical representation to their correct string 
-representation, and then summarize with `gtsummary`.
+representation, and then summarize with `{gtsummary}`.
 
 ```{r review_months, fig.align = "center"}
 review_census_month <-

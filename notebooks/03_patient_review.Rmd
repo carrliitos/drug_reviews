@@ -66,7 +66,7 @@ cleaned_txt <-
   stringr::str_replace_all("[.]{2,3}", ".") # convert ellipsis to a period
 ```
 
-The following is an example of a cleaned text of patient 4's review:
+The following is an example of a cleaned text of a patient's review:
 
 **Original**: `r sample_txt_cleanup`
 
@@ -83,6 +83,89 @@ full$review <-
   stringr::str_squish() %>%
   stringr::str_replace_all("[.]{2,3}", ".") # convert ellipsis to a period
 ```
+
+## Advanced Preprocessing
+
+For the rest of the our preprocessing tasks, we will leverage the `{quanteda}` 
+package. `{quanteda}` is an amazing suite for text analytic functions 
+[@Quanteda2018].
+
+### Tokenization
+
+Tokenization is the process of converting long strings into a token of words. 
+For example, the sentence "Let's go to N.Y.!" can be tokenized to the following 
+tokens: {`Let`, `'s`, `go`, `to`, `N.Y.`, `!`}
+
+#### Why do we do it?
+
+Computers don't understand language, but they are really good at counting pieces 
+of language. The most informative pieces are (often) words.
+
+```{r tokenization}
+tokenization_full <-
+  full %>%
+  dplyr::mutate(doc_id = paste0("text", dplyr::row_number()))
+
+full_tokens <-
+  tokenization_full$review %>%
+  quanteda::tokens() 
+
+tok_out <- as.list(full_tokens)
+
+# create named array of equal lengths
+x <- sapply(tok_out, '[', seq(max(lengths(tok_out))))
+
+df_via_toks <- 
+  x %>% 
+  tibble::as_tibble() %>% 
+  tidyr::pivot_longer(
+    cols = dplyr::everything(), names_to = "doc_id", values_to = "tokens"
+  ) %>% 
+  dplyr::filter(!is.na(tokens)) %>%  # remove NA values of each text
+  dplyr::arrange(doc_id)
+
+tokenized_full <-
+  tokenization_full %>%
+  dplyr::inner_join(df_via_toks, by = "doc_id") %>%
+  dplyr::select(-review)
+
+example <- 
+  tokenized_full %>%
+  dplyr::slice_head(n = 30) %>%
+  dplyr::select(id, drugName, condition, tokens)
+
+example
+```
+
+### Stemming
+
+Reducing words to their stem.
+
+#### Why do we do it?
+
+When we do not want to dstinguish between different verb forms (walk, walk-ing, 
+walk-ed, walk-s) and singular-plural (cat, cat-s).
+
+### Lemmatization
+
+Refers to doing things properly with the use of a vocabulary and morphological 
+analysis of words, normally aiming to remove inflectional endings only and to 
+return the base or dictionary form of a word, which is known as the *lemma*.
+
+For sentiment analysis, I think it would be more important to lemmatize words 
+instead of stem them so that we do not lose the meaning of targeted words.
+
+Lemmatization is more accurate but it requires data about language, and it also 
+takes much more time.
+
+### Stopwords removal
+
+This is done to remove stopwords.
+
+#### Why do we do it?
+
+Some words are simply not interesting, but do occur often. For instance, words 
+such as i, me, my, myself, is, was, ours, ourselves, you, your, etc.
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 saveRDS(full, here::here("data", "full_cleaned.rds"))
