@@ -114,42 +114,6 @@ tokens: {`Let`, `'s`, `go`, `to`, `N.Y.`, `!`}
 Computers don't understand language, but they are really good at counting pieces 
 of language. The most informative pieces are (often) words.
 
-```{r tokenization}
-tokenization_full <-
-  full %>%
-  dplyr::mutate(doc_id = paste0("text", dplyr::row_number()))
-
-full_tokens <-
-  tokenization_full$review %>%
-  quanteda::tokens() 
-
-tok_out <- as.list(full_tokens)
-
-# create named array of equal lengths
-x <- sapply(tok_out, '[', seq(max(lengths(tok_out))))
-
-df_via_toks <- 
-  x %>% 
-  tibble::as_tibble() %>% 
-  tidyr::pivot_longer(
-    cols = dplyr::everything(), names_to = "doc_id", values_to = "tokens"
-  ) %>% 
-  dplyr::filter(!is.na(tokens)) %>%  # remove NA values of each text
-  dplyr::arrange(doc_id)
-
-tokenized_full <-
-  tokenization_full %>%
-  dplyr::inner_join(df_via_toks, by = "doc_id") %>%
-  dplyr::select(-review)
-
-example <- 
-  tokenized_full %>%
-  dplyr::slice_head(n = 30) %>%
-  dplyr::select(id, drugName, condition, tokens)
-
-example
-```
-
 ### Stemming
 
 Reducing words to their stem.
@@ -171,6 +135,23 @@ instead of stem them so that we do not lose the meaning of targeted words.
 Lemmatization is more accurate but it requires data about language, and it also 
 takes much more time.
 
+```{r lemmatized}
+original <- paste0(quanteda::as.tokens(as.list(example$tokens)))
+
+# Stemmed texts
+lemmas <- 
+  quanteda::tokens_replace(
+    quanteda::as.tokens(as.list(example$tokens)), 
+    pattern = lexicon::hash_lemmas$token, 
+    replacement = lexicon::hash_lemmas$lemma
+  ) %>%
+  paste0()
+```
+
+We can see the original here: `r original`
+
+Then the lemmatized text: `r lemmas`
+
 ### Stopwords removal
 
 This is done to remove stopwords.
@@ -180,9 +161,27 @@ This is done to remove stopwords.
 Some words are simply not interesting, but do occur often. For instance, words 
 such as i, me, my, myself, is, was, ours, ourselves, you, your, etc.
 
+```{r stopwords}
+tokens <- 
+  quanteda::tokens(
+    "I will be a successful data science in the future! Let's go!", 
+    remove_punct = TRUE
+  )
+
+stopwords_removed <-
+  quanteda::tokens_remove(tokens, quanteda::stopwords("english"))
+```
+
+Original token: `r tokens`
+
+Stopwords removed: `r stopwords_removed`
+
+## Full processing application
+
+We apply all concepts into our working dataset.
+
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 saveRDS(full, here::here("data", "full_cleaned.rds"))
-saveRDS(tokenized_full, here::here("data", "tokenized_full.rds"))
 
 rm(list = ls())
 gc()
