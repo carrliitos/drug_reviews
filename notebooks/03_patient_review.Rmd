@@ -12,6 +12,19 @@ full <- readRDS(here::here("data", "full.rds"))
 
 # Patient reviews
 
+Since there are so many observations, when it comes to tokenization of the 
+reviews, my laptop will not be able to handle all of that computing power. So, 
+I have decided to only capture the first 1,000 observations in each year and 
+work with those.
+
+```{r cut_off}
+full <-
+  full %>%
+  dplyr::group_by(census_year) %>%
+  dplyr::slice_head(n = 1000) %>%
+  dplyr::ungroup()
+```
+
 Let's take a look at 3 sample patients' review text to se what we are dealing 
 with.
 

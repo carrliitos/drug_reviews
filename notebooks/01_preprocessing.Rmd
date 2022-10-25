@@ -53,7 +53,7 @@ We will also remove any special characters in the `drugName` and `condition`
 columns, turn white spaces into underscores, while keeping the original text for 
 the `review` for now.
 
-```{r tokenization}
+```{r preprocessing}
 full <-
   full %>%
   dplyr::rename(id = "...1")
