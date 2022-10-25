@@ -19,7 +19,7 @@ with.
 sample_txt <-
   full %>%
   dplyr::select(id, review) %>%
-  head(n = 5)
+  dplyr::slice_sample(n = 5)
 ```
 
 **Patient 1's review reads:** `r sample_txt[[2]][1]`
@@ -72,7 +72,21 @@ The following is an example of a cleaned text of patient 4's review:
 
 **Cleaned**: `r cleaned_txt`
 
+```{r full_text_clean}
+full$review <- 
+  full$review %>%
+  textutils::HTMLdecode() %>%
+  iconv("UTF-8", sub = "byte") %>%
+  tolower() %>%
+  stringr::str_replace_all("[^[:alnum:][.]['][!]]", " ") %>%
+  stringr::str_trim() %>%
+  stringr::str_squish() %>%
+  stringr::str_replace_all("[.]{2,3}", ".") # convert ellipsis to a period
+```
+
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
+saveRDS(full, here::here("data", "full_cleaned.rds"))
+
 rm(list = ls())
 gc()
 ```
