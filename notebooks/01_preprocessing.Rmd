@@ -39,9 +39,9 @@ Our data dictionary is as follows:
 | date          | Date of review entry                    |
 | usefulCount   | Number of users who found review useful |
 
-## Tokenization and cleaning
+## Basic Cleaning
 
-We do some basic tokenization and cleaning.
+We do some basic cleaning.
 
 The first column, `...1` looks to be an identifier, so we rename that column as 
 and `id`, and then we do some minor tokenization to enforce consistency. 
