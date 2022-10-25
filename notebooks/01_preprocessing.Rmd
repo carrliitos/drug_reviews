@@ -19,8 +19,7 @@ train <- readr::read_tsv(here::here("data-raw", "drugsComTrain_raw.tsv"))
 test <- readr::read_tsv(here::here("data-raw", "drugsComTest_raw.tsv"))
 
 full <- 
-  dplyr::bind_rows(train, test) %>%
-  dplyr::slice_sample(n = 1000)
+  dplyr::bind_rows(train, test)
 
 # Check our data
 tibble::glimpse(full)
