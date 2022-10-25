@@ -8,10 +8,6 @@ date: "October 22, 2022"
 
 ## Load and check the data
 
-
-**Disclaimer**: I am going to just select a random sample of 1,000 reviews 
-because my laptop does not have enough computing power.
-
 ```{r setup}
 library(magrittr)
 
