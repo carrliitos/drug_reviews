@@ -169,6 +169,7 @@ such as i, me, my, myself, is, was, ours, ourselves, you, your, etc.
 
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 saveRDS(full, here::here("data", "full_cleaned.rds"))
+saveRDS(tokenized_full, here::here("data", "tokenized_full.rds"))
 
 rm(list = ls())
 gc()
