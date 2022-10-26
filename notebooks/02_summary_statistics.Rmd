@@ -1,7 +1,7 @@
 ---
 title: "Summary statistics"
 author: "Benzon Carlitos Salazar"
-date: "October 22, 2022"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 ---
 
 ```{r setup, warning=FALSE, include=FALSE, echo=FALSE}
