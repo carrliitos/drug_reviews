@@ -485,6 +485,13 @@
       "Repository": "CRAN",
       "Hash": "02e3c6e7df163aafa8477225e6827bc5"
     },
+    "nsyllable": {
+      "Package": "nsyllable",
+      "Version": "1.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1b4597ff3ffce588ac437a7ca69b0fc1"
+    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.8.1",
@@ -513,6 +520,13 @@
       "Repository": "CRAN",
       "Hash": "14dc9f7a3c91ebb14ec5bb9208a07061"
     },
+    "proxyC": {
+      "Package": "proxyC",
+      "Version": "0.3.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "95667fa24d3adbc5c93af45bfff5a415"
+    },
     "purrr": {
       "Package": "purrr",
       "Version": "0.3.5",
@@ -533,6 +547,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "f2c2099e13631a9b94c91beac3921976"
+    },
+    "quanteda.textstats": {
+      "Package": "quanteda.textstats",
+      "Version": "0.96",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "98cfe3fc079634c5e4505e3466391504"
     },
     "rappdirs": {
       "Package": "rappdirs",
