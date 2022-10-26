@@ -86,7 +86,7 @@ The following is an example of a cleaned text of a patient's review:
 **Cleaned**: `r cleaned_txt`
 
 ```{r full_text_clean}
-full$review <- 
+cleaned_review <-
   full$review %>%
   textutils::HTMLdecode() %>%
   iconv("UTF-8", sub = "byte") %>%
@@ -176,8 +176,28 @@ stopwords_removed <-
 
 We apply all concepts into our working dataset.
 
+
+```{r full_cleaning}
+reviews <-
+  cleaned_review %>%
+  quanteda::tokens(remove_punct = TRUE) %>%
+  quanteda::tokens_replace(
+    pattern = lexicon::hash_lemmas$token,
+    replacement = lexicon::hash_lemmas$lemma
+  ) %>% 
+  quanteda::tokens_remove(quanteda::stopwords("english"))
+
+reviews_df <- 
+  data.frame(
+    id = seq_along(reviews),
+    text = sapply(reviews, paste, collapse = " "),
+    row.names = NULL
+  )
+```
+
 ```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
-saveRDS(full, here::here("data", "full_cleaned.rds"))
+saveRDS(full, here::here("data", "cleaned_review.rds"))
+readr::write_csv(reviews_df, here::here("data", "review_tokens.csv"))
 
 rm(list = ls())
 gc()
