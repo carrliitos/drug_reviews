@@ -31,6 +31,8 @@ Exploratory data analysis exercise of the drug review dataset that provides
 patient reviews on specific drugs along with related conditions and a 10 star 
 patient rating reflecting overall patient satisfaction.
 
+[Source Code](https://github.com/carrliitos/drug_reviews)
+
 # Introduction
 
 My goal for this project is to exercise my data analysis skills. I have chosen 
@@ -55,7 +57,7 @@ frequency analysis.
 # Conclusion
 
 I think this is where we will finish this project. Based on our corpus statistic, 
-out of the 1,000 words we selected per year, we can see that `take` is the most 
+out of the 1,000 reviews we selected per year, we can see that `take` is the most 
 frequent word used. And this makes sense because our corpus is on drug reviews, 
 and the act of ***taking*** a drug is probably the only thing you do with 
 medicine. Unless, of course the medicine was taken as a form of injection like 
