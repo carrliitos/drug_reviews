@@ -195,10 +195,12 @@ reviews_df <-
   )
 ```
 
-```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
+```{r save}
 saveRDS(full, here::here("data", "cleaned_review.rds"))
 readr::write_csv(reviews_df, here::here("data", "review_tokens.csv"))
+```
 
+```{r save_and_clean, include=FALSE, echo=FALSE, warning=FALSE}
 rm(list = ls())
 gc()
 ```

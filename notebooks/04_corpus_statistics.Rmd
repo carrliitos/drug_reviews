@@ -1,6 +1,110 @@
 ---
-title: "Patient Review"
+title: "Corpus Statistics"
 author: "Benzon Carlitos Salazar"
 date: "October 22, 2022"
 ---
+
+```{r setup, warning=FALSE, include=FALSE, echo=FALSE}
+library(magrittr)
+```
+
+# Corpus Statistics
+
+For this section, we utilize `{quanteda}` to do some corpus statistics. We first 
+have to build our corpus from our tokens that we cleaned from 
+`03_patient_reviews.Rmd` notebook.
+
+```{r corpus_create}
+tokens_csv <- readr::read_csv(here::here("data", "review_tokens.csv"))
+
+corpus <- quanteda::corpus(tokens_csv, text_field = "text")
+```
+
+## Document-term Matrix
+
+Given our corpus, we are going to create a Document-term Matrix. A document-term 
+matrix is simply a mathematical matrix which describing the frequency of terms 
+that occur in our text.
+
+`{quanteda}` uses the `quanteda::dfm()` function to generate a document-term 
+matrix. DFM stands for Document-Feature Matrix, which is similar to a 
+document-term matrix, but just different terminologies.
+
+```{r dtm}
+dtm <- quanteda::dfm(quanteda::tokens(corpus))
+
+dtm
+```
+
+We see that we have 10,000 documents, with 12,978 features. Pretty cool! We also 
+see that we have 99.74% sparse, which refers to how sparse the matrix is. In our 
+case, 99.74% of all the cells in our document-term matrix contains the value 0. 
+This makes a lot of sense because we have 12,978 **unique** words that have been 
+used in our corpus and many documents only contain a very small portion of all 
+of these words.
+
+## Trim less frequent words
+
+Next, it is also a good idea to remove the least frequent words. That way, we 
+can just do our corpus statistics on the more interesting ones.
+
+I think for now, we'll remove those terms in our dtm that occurs less than 10 
+times.
+
+```{r trim}
+trimmed_dtm <- 
+  dtm %>%
+  quanteda::dfm_trim(min_termfreq = 10)
+
+trimmed_dtm
+```
+
+We now see that we our features decreased from 12,978 to 2,874. It is usually 
+useful to remove these least frequent words because they tend to be less 
+informative than the most frequent ones. And sometimes for text analysis, it is 
+also good to not have too many terms. 
+
+## Analysis
+
+For our analysis, we are going to be doing some word clouds. Word clouds are 
+visual representations of text that give greater rank to words that appear more 
+frequently. For this, we will use `{quanteda}`'s `textplot_wordcloud()`. To use 
+the `textplot_wordcloud()` function, we need to install `{quanteda.textplots}`.
+
+```{r wordcloud}
+trimmed_dtm %>%
+quanteda.textplots::textplot_wordcloud(max_words = 50, color = c("blue", "red"))
+```
+
+The red words are the most frequent words, and the blue ones are the least 
+frequent. Additionally, we can also look at text frequency as a dataframe. For 
+this one, we install `{quanteda.textstats}`
+
+```{r text_frequency}
+txt_freq <-
+  trimmed_dtm %>%
+  quanteda.textstats::textstat_frequency(n = 20)
+```
+
+So, we see the 20 most frequent words:
+
+`r knitr::kable(txt_freq)`
+
+Plotting this, we can see the following:
+
+```{r txt_freq_plot}
+txt_freq %>%
+ggplot2::ggplot(ggplot2::aes(x = reorder(feature, frequency), y = frequency)) +
+ggplot2::geom_point() +
+ggplot2::coord_flip() + 
+ggplot2::labs(x = NULL, y = "Frequency")
+```
+
+```{r clean_save, warning=FALSE, include=FALSE, echo=FALSE}
+saveRDS(trimmed_dtm, here::here("data", "trimmed_dtm.rds"))
+saveRDS(txt_freq, here::here("data", "txt_freq.rds"))
+
+rm(list = ls())
+gc()
+```
 

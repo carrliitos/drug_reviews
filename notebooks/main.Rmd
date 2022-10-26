@@ -49,6 +49,23 @@ frequency analysis.
 ```{r child = "03_patient_review.Rmd"}
 ```
 
+```{r child = "04_corpus_statistics.Rmd"}
+```
+
+# Conclusion
+
+I think this is where we will finish this project. Based on our corpus statistic, 
+out of the 1,000 words we selected per year, we can see that `take` is the most 
+frequent word used. And this makes sense because our corpus is on drug reviews, 
+and the act of ***taking*** a drug is probably the only thing you do with 
+medicine. Unless, of course the medicine was taken as a form of injection like 
+a vaccination. However, it still makes sense because these are reviews of 
+patients of drugs that they administered themselves.
+
+All in all, if I had more computing power, perhaps I can do this on the full 
+data set. Perhaps in the future, the computation itself can be done in the cloud, 
+as well as any storage I may need.
+
 # Packages Used
 
 ```{r packages_used, echo=FALSE, include=FALSE}
