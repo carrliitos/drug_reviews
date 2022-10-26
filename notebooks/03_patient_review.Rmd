@@ -136,21 +136,23 @@ Lemmatization is more accurate but it requires data about language, and it also
 takes much more time.
 
 ```{r lemmatized}
-original <- paste0(quanteda::as.tokens(as.list(example$tokens)))
+original <- 
+  cleaned_txt %>%
+  quanteda::tokens()
 
 # Stemmed texts
 lemmas <- 
   quanteda::tokens_replace(
-    quanteda::as.tokens(as.list(example$tokens)), 
+    original, 
     pattern = lexicon::hash_lemmas$token, 
     replacement = lexicon::hash_lemmas$lemma
   ) %>%
   paste0()
 ```
 
-We can see the original here: `r original`
+**Original**: `r paste0(original)`
 
-Then the lemmatized text: `r lemmas`
+**Lemmatized**: `r lemmas`
 
 ### Stopwords removal
 
@@ -162,19 +164,13 @@ Some words are simply not interesting, but do occur often. For instance, words
 such as i, me, my, myself, is, was, ours, ourselves, you, your, etc.
 
 ```{r stopwords}
-tokens <- 
-  quanteda::tokens(
-    "I will be a successful data science in the future! Let's go!", 
-    remove_punct = TRUE
-  )
-
 stopwords_removed <-
-  quanteda::tokens_remove(tokens, quanteda::stopwords("english"))
+  quanteda::tokens_remove(original, quanteda::stopwords("english"))
 ```
 
-Original token: `r tokens`
+**Original**: `r paste0(original)`
 
-Stopwords removed: `r stopwords_removed`
+**Stopwords removed**: `r paste0(stopwords_removed)`
 
 ## Full processing application
 
