@@ -37,9 +37,8 @@ My goal for this project is to exercise my data analysis skills. I have chosen
 to work with the Drug Reviews dataset [@Gräßer2018] after spending some time in 
 the UCI Machine Learning Repository [@Dua2019].
 
-I will focus on some illustrative data visualizations, and I will also try to 
-stay true to the original paper and do a very basic, beginner-friendly sentiment 
-analysis of drug satisfaction.
+I will focus on some illustrative data visualizations, as well as, some word 
+frequency analysis.
 
 ```{r child = "01_preprocessing.Rmd"}
 ```
