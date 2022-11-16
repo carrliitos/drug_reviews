@@ -1,0 +1,8 @@
+**/.*
+!/.Rbuildignore
+!/.Rprofile
+/Dockerfile
+/renv.lock
+/renv/library/
+/renv/python/
+/renv/staging/
