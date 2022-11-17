@@ -11,4 +11,6 @@ RUN echo "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.m
 RUN R -e 'renv::install()'
 COPY . /root/build
 
-RUN R -e 'source(here::here("execute.R"))'
+RUN R -e "install.packages('devtools',repos = 'http://cran.us.r-project.org')" &&\
+	R -e 'devtools::load_all(); source(paste0(getwd(), "/execute.R"))'
+	
